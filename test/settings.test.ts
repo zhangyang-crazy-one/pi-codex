@@ -485,6 +485,7 @@ test("settings screen renders a description for every setting", async () => {
             "Use OpenAI Codex responses compaction checkpoints when available.",
             "Automatically run native Codex compaction between turns.",
             "Context usage percentage that triggers native auto-compaction.",
+            "Catalog default, account maximum, or the Codex CLI context window.",
             "Resume transiently failed Codex turns after Pi exhausts its own retries.",
             "Hold text follow-ups during a Codex turn and deliver them together after it settles.",
             "Additional delayed resume attempts after Pi's provider retries fail.",

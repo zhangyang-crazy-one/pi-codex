@@ -2,6 +2,7 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 import { codexCoreActivationDecisions, syncCodexCoreTools } from "./activation.ts";
 import { isModelWithStringApi } from "./codex/auth.ts";
+import { applyCatalogContextToModel } from "./codex/catalog-context.ts";
 import { codexModelRequestProfile } from "./codex/models.ts";
 import {
     CODEX_RESPONSES_LITE_HEADER,
@@ -64,6 +65,9 @@ export default function extension(pi: ExtensionAPI): void {
     const warnedPromptConflictSessions = new Set<string>();
     const unregisterCodexSettingsHost = registerCodexSettingsHost(packageName);
     const getConfig = (): CodexCoreConfig => config;
+    const applyCatalogContext = (ctx: Parameters<typeof syncCodexCoreTools>[1]): void => {
+        applyCatalogContextToModel(ctx.model, config.context.window);
+    };
     const syncToolActivation = (ctx: Parameters<typeof syncCodexCoreTools>[1]): void => {
         const activation = togglesActivation.update(
             ctx.sessionManager.getSessionId(),
@@ -107,6 +111,7 @@ export default function extension(pi: ExtensionAPI): void {
         }
 
         recovery.start(pi, ctx);
+        applyCatalogContext(ctx);
         syncToolActivation(ctx);
 
         if (config.openai.fast && ctx.hasUI) {
@@ -116,6 +121,7 @@ export default function extension(pi: ExtensionAPI): void {
 
     pi.on("model_select", async (_event, ctx) => {
         clearProviderRequestTemplate(ctx.sessionManager.getSessionId());
+        applyCatalogContext(ctx);
         syncToolActivation(ctx);
     });
 
@@ -152,6 +158,7 @@ export default function extension(pi: ExtensionAPI): void {
     });
 
     pi.on("before_agent_start", async (event, ctx) => {
+        applyCatalogContext(ctx);
         const result = buildCodexCoreSystemPromptResult(
             event.systemPrompt,
             config,
@@ -187,6 +194,7 @@ export default function extension(pi: ExtensionAPI): void {
     });
 
     pi.on("session_before_compact", async (event, ctx) => {
+        applyCatalogContext(ctx);
         const sessionId = ctx.sessionManager.getSessionId();
         if (!config.compaction.enabled) {
             responsesLitePolicy.beginPiCompactionFallback(sessionId);
@@ -222,6 +230,7 @@ export default function extension(pi: ExtensionAPI): void {
     });
 
     pi.on("agent_end", async (event, ctx) => {
+        applyCatalogContext(ctx);
         if (!config.compaction.enabled || !config.compaction.auto) {
             return;
         }
@@ -233,6 +242,7 @@ export default function extension(pi: ExtensionAPI): void {
     });
 
     pi.on("agent_settled", async (_event, ctx) => {
+        applyCatalogContext(ctx);
         if (supportsInteractiveRecovery(ctx) && isActiveCodexResponsesModel(ctx)) {
             recovery.settle(pi, ctx);
         }

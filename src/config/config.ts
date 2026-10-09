@@ -33,6 +33,7 @@ export type CodexPersonality = "friendly" | "pragmatic" | "none";
 export type CodexToolScope = "codex" | "all";
 export type CodexApplyPatchMode = "off" | "openai" | "all";
 export type CodexWebSearchMode = "cached" | "indexed" | "live";
+export type CodexContextWindowMode = "default" | "max" | "codex-config";
 export type CodexVerbosity = "low" | "medium" | "high";
 export type CodexCompactionReasoning = string;
 
@@ -41,6 +42,11 @@ export const CODEX_CURRENT_MODEL_SELECTION = "current";
 export const CODEX_TOOL_SCOPES: readonly CodexToolScope[] = ["codex", "all"];
 export const CODEX_APPLY_PATCH_MODES: readonly CodexApplyPatchMode[] = ["off", "openai", "all"];
 export const CODEX_WEB_SEARCH_MODES: readonly CodexWebSearchMode[] = ["cached", "indexed", "live"];
+export const CODEX_CONTEXT_WINDOW_MODES: readonly CodexContextWindowMode[] = [
+    "default",
+    "max",
+    "codex-config",
+];
 export const CODEX_PROMPT_MODES: readonly CodexPromptMode[] = ["pi", "codex"];
 export const CODEX_PERSONALITIES: readonly CodexPersonality[] = ["friendly", "pragmatic", "none"];
 export const CODEX_VERBOSITY_LEVELS: readonly CodexVerbosity[] = ["low", "medium", "high"];
@@ -123,6 +129,7 @@ function formatTypeboxErrorMessage(instancePath: string): string {
     if (instancePath.includes("baseDelayMs")) return "Expected an integer from 1000 to 300000.";
     if (instancePath.includes("maxDelayMs")) return "Expected an integer from 1000 to 900000.";
     if (instancePath.includes("webSearchMode")) return "Expected one of: cached, indexed, live.";
+    if (instancePath.includes("window")) return "Expected one of: default, max, codex-config.";
     if (instancePath.includes("applyPatch")) return "Expected one of: off, openai, all.";
     if (instancePath.includes("personality")) return "Expected one of: friendly, pragmatic, none.";
     if (instancePath.includes("verbosity")) return "Expected one of: low, medium, high.";

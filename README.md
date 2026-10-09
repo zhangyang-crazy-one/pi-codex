@@ -1,17 +1,30 @@
-# Pi Codex Core
+# pi-codex
 
-Everything GPT models need to feel at home in Pi.
+Pi plugin for Codex search, image generation, remote compaction, and the live Codex context window.
 
-[![CI](https://github.com/zigai/pi-codex-core/actions/workflows/ci.yml/badge.svg)](https://github.com/zigai/pi-codex-core/actions/workflows/ci.yml)
-[![npm version](https://img.shields.io/npm/v/@zigai/pi-codex-core?color=blue)](https://www.npmjs.com/package/@zigai/pi-codex-core)
-[![npm downloads](https://img.shields.io/npm/dm/@zigai/pi-codex-core?color=blue)](https://www.npmjs.com/package/@zigai/pi-codex-core)
+Derived from [zigai/pi-codex-core](https://github.com/zigai/pi-codex-core) under the MIT license. This package keeps that plugin's `web_run`, `imagegen`, `view_image`, and Codex compaction v2, and adds the account catalog window.
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## Install
 
 ```sh
-pi install npm:@zigai/pi-codex-core
+pi install git:github.com/zhangyang-crazy-one/pi-codex
 ```
+
+## Dynamic context
+
+On each Codex turn the plugin reads `$CODEX_HOME/models_cache.json` (default `~/.codex/models_cache.json`) and writes the resolved window onto the active `openai-codex` model. Pi's usage meter, Pi compaction, and this plugin's remote compaction all read that value.
+
+`context.window` in `/codex`:
+
+| Mode | Window |
+| --- | --- |
+| `default` | Catalog `context_window` (272K for current GPT-6 / 6.1 rows) |
+| `max` | Catalog `max_context_window` (872K for those rows) |
+| `codex-config` | Top-level `model_context_window` in `~/.codex/config.toml`, clamped to the catalog maximum. Missing config uses the catalog default. |
+
+The default mode is `codex-config`. `effective_context_window_percent` is kept on the parsed row and is not applied again, because Pi already reserves tokens and this plugin compacts at its own percentage of the selected window. `supports_experimental_context` is recorded from the catalog; `max` still selects the account maximum when that flag is false.
 
 ## Features
 
@@ -67,6 +80,7 @@ Global settings are stored in `~/.pi/agent/extension-settings/pi-codex-core.json
 | `compaction.enabled` | boolean | `true` | Enable Codex-style conversation compaction. |
 | `compaction.auto` | boolean | `true` | Automatically trigger compaction when reaching the context threshold. |
 | `compaction.thresholdPercent` | integer | `80` | Context percentage threshold that triggers auto-compaction. |
+| `context.window` | `default` \| `max` \| `codex-config` | `"codex-config"` | Context window for Codex models: catalog default (272K), account maximum, or the Codex CLI model_context_window. |
 | `recovery.enabled` | boolean | `true` | Resume transiently failed Codex turns after Pi exhausts retries. |
 | `recovery.batchFollowUps` | boolean | `false` | Deliver user follow-up messages sent during a turn together when it completes. |
 | `recovery.maxAttempts` | integer | `3` | Maximum delayed resume attempts for a failed turn. |
@@ -103,6 +117,9 @@ Global settings are stored in `~/.pi/agent/extension-settings/pi-codex-core.json
     "enabled": true,
     "auto": true,
     "thresholdPercent": 80
+  },
+  "context": {
+    "window": "codex-config"
   },
   "recovery": {
     "enabled": true,

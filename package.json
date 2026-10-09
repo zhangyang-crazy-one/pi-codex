@@ -1,7 +1,7 @@
 {
-  "name": "@zigai/pi-codex-core",
-  "version": "1.2.0",
-  "description": "Everything GPT models need to feel at home in Pi.",
+  "name": "pi-codex",
+  "version": "0.1.0",
+  "description": "Pi plugin for Codex search, image generation, remote compaction, and the live Codex context window.",
   "keywords": [
     "pi",
     "pi-codex-compaction",
@@ -12,15 +12,15 @@
     "pi-package",
     "pi-web-search"
   ],
-  "homepage": "https://github.com/zigai/pi-codex-core#readme",
+  "homepage": "https://github.com/zhangyang-crazy-one/pi-codex#readme",
   "bugs": {
-    "url": "https://github.com/zigai/pi-codex-core/issues"
+    "url": "https://github.com/zhangyang-crazy-one/pi-codex/issues"
   },
   "license": "MIT",
   "author": "zigai",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zigai/pi-codex-core.git"
+    "url": "git+https://github.com/zhangyang-crazy-one/pi-codex.git"
   },
   "files": [
     "src",

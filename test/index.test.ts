@@ -179,8 +179,10 @@ test("input lifecycle holds follow-ups and merges them into the next manual mess
 test("session shutdown releases Pi Toggles lifecycle subscriptions", async () => {
     const root = await mkdtemp(join(tmpdir(), "pi-codex-core-shutdown-"));
     const previousAgentDir = process.env.PI_CODING_AGENT_DIR;
+    const previousCodexHome = process.env.CODEX_HOME;
     try {
         process.env.PI_CODING_AGENT_DIR = join(root, "agent");
+        process.env.CODEX_HOME = root;
         const harness = makeExtensionHarness();
         let proposals = 0;
         harness.events.on("pi-toggles:set-activation-proposal", () => {
@@ -206,6 +208,8 @@ test("session shutdown releases Pi Toggles lifecycle subscriptions", async () =>
     } finally {
         if (previousAgentDir === undefined) delete process.env.PI_CODING_AGENT_DIR;
         else process.env.PI_CODING_AGENT_DIR = previousAgentDir;
+        if (previousCodexHome === undefined) delete process.env.CODEX_HOME;
+        else process.env.CODEX_HOME = previousCodexHome;
 
         await rm(root, { recursive: true, force: true });
     }
@@ -400,8 +404,10 @@ function makeStartupWarningContext(
 test("applies GPT-5.6 Responses Lite compatibility through extension hooks", async () => {
     const root = await mkdtemp(join(tmpdir(), "pi-codex-core-responses-lite-"));
     const previousAgentDir = process.env.PI_CODING_AGENT_DIR;
+    const previousCodexHome = process.env.CODEX_HOME;
     try {
         process.env.PI_CODING_AGENT_DIR = join(root, "agent");
+        process.env.CODEX_HOME = root;
         const harness = makeExtensionHarness();
         extension(harness.api);
         const ctx = makeExtensionContext(
@@ -444,6 +450,8 @@ test("applies GPT-5.6 Responses Lite compatibility through extension hooks", asy
     } finally {
         if (previousAgentDir === undefined) delete process.env.PI_CODING_AGENT_DIR;
         else process.env.PI_CODING_AGENT_DIR = previousAgentDir;
+        if (previousCodexHome === undefined) delete process.env.CODEX_HOME;
+        else process.env.CODEX_HOME = previousCodexHome;
 
         await rm(root, { recursive: true, force: true });
     }

@@ -169,6 +169,22 @@ export const recoverySchema = Type.Object(
     },
 );
 
+export const CodexContextWindowModeSchema = Type.Union(
+    [Type.Literal("default"), Type.Literal("max"), Type.Literal("codex-config")],
+    {
+        default: "codex-config",
+        description:
+            "Context window for Codex models: catalog default (272K), account maximum, or the Codex CLI model_context_window.",
+    },
+);
+
+export const contextSchema = Type.Object(
+    {
+        window: CodexContextWindowModeSchema,
+    },
+    { additionalProperties: false, default: { window: "codex-config" } },
+);
+
 export const openaiSchema = Type.Object(
     {
         webSearchModel: Type.String({
@@ -219,6 +235,7 @@ export const settingsSchema = Type.Object(
         tools: toolsSchema,
         prompt: promptSchema,
         compaction: compactionSchema,
+        context: contextSchema,
         recovery: recoverySchema,
         openai: openaiSchema,
     },

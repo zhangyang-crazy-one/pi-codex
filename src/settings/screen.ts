@@ -11,6 +11,7 @@ import type { CodexFailure } from "../codex/failures.ts";
 import {
     CODEX_APPLY_PATCH_MODES,
     CODEX_COMPACTION_REASONING_LEVELS,
+    CODEX_CONTEXT_WINDOW_MODES,
     CODEX_CURRENT_MODEL_SELECTION,
     CODEX_PERSONALITIES,
     CODEX_WEB_SEARCH_MODES,
@@ -498,6 +499,13 @@ function buildItems(
                 currentValue: String(config.compaction.thresholdPercent),
                 values: ["80", "85", "90", "95"],
             },
+            {
+                id: "contextWindow",
+                label: "Context window",
+                description: "Catalog default, account maximum, or the Codex CLI context window.",
+                currentValue: config.context.window,
+                values: [...CODEX_CONTEXT_WINDOW_MODES],
+            },
             toggleItem(
                 "outageRecovery",
                 "Outage recovery",
@@ -695,6 +703,11 @@ function applySettingChange(id: string, value: string, config: CodexCoreConfig):
         return Number.isFinite(thresholdPercent)
             ? { ...config, compaction: { ...config.compaction, thresholdPercent } }
             : config;
+    }
+
+    if (id === "contextWindow") {
+        const window = CODEX_CONTEXT_WINDOW_MODES.find((item) => item === value);
+        return window ? { ...config, context: { window } } : config;
     }
 
     if (id === "outageRecovery") {

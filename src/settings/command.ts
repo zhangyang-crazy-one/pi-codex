@@ -175,6 +175,13 @@ function applyChangedConfigValues(
                 nextEffectiveConfig.prompt.personality,
             ),
         },
+        context: {
+            window: changedValue(
+                globalConfig.context.window,
+                previousEffectiveConfig.context.window,
+                nextEffectiveConfig.context.window,
+            ),
+        },
         compaction: {
             enabled: changedValue(
                 globalConfig.compaction.enabled,
